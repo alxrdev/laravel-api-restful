@@ -33,6 +33,13 @@ class SellerController extends Controller
      */
     public function show($id)
     {
-        //
+        $seller = Seller::has('products')->findOrFail($id);
+
+        return response()
+            ->json([
+                'success' => true,
+                'message' => 'All seller',
+                'data' => $seller
+            ], 200);
     }
 }
