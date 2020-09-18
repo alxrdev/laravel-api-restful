@@ -20,4 +20,19 @@ class Product extends Model
     {
         return $this->status == Product::PRODUCT_AVAILABLE;
     }
+
+    public function seller()
+    {
+        return $this->belongsTo('App\Models\Seller');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Models\Transaction');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany('App\Models\Category');
+    }
 }
