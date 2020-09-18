@@ -10,6 +10,6 @@ class Buyer extends User
 
     public function transactions()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasMany('App\Models\Transaction');
     }
 }
