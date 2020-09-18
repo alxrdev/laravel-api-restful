@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Buyer;
+namespace App\Http\Controllers\Api\Buyer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

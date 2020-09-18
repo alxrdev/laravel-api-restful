@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Seller;
+namespace App\Http\Controllers\Api\Category;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class SellerController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.

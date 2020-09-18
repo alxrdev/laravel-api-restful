@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,14 +14,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'All users',
-                'data' => $users
-            ], 200);
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -44,14 +46,18 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        //
+    }
 
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'Showing user',
-                'data' => $user
-            ], 200);
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
