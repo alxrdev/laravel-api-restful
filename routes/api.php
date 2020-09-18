@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Buyer\BuyerController;
-use App\Http\Controllers\Category\CategoryController;
-use App\Http\Controllers\Product\ProductController;
-use App\Http\Controllers\Seller\SellerController;
-use App\Http\Controllers\Transaction\TransactionController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Api\Buyer\BuyerController;
+use App\Http\Controllers\Api\Category\CategoryController;
+use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Api\Seller\SellerController;
+use App\Http\Controllers\Api\Transaction\TransactionController;
+use App\Http\Controllers\Api\User\UserController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
