@@ -27,19 +27,19 @@ class DatabaseSeeder extends Seeder
         DB::table('category_product')->truncate();
 
         User::factory()
-            ->times(200)
+            ->times(50)
             ->create();
         
         Category::factory()
-            ->times(30)
+            ->times(10)
             ->create();
         
         Product::factory()
-            ->times(1000)
+            ->times(100)
             ->create();
 
         Transaction::factory()
-            ->times(1000)
+            ->times(50)
             ->create();
     }
 }
