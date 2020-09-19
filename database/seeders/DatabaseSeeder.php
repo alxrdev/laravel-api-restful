@@ -39,7 +39,6 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         Transaction::factory()
-            ->times(50)
-            ->create();
+            ->times(50)->create();
     }
 }
