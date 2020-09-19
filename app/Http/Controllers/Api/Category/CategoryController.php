@@ -3,23 +3,33 @@
 namespace App\Http\Controllers\Api\Category;
 
 use App\Dtos\Category\CreateCategoryDto;
+use App\Dtos\Category\UpdateCategoryDto;
 use App\Http\Controllers\Api\ApiController;
 use App\Models\Category;
 use App\Services\Category\CreateCategoryService;
+use App\Services\Category\UpdateCategoryService;
 use Illuminate\Http\Request;
 
 class CategoryController extends ApiController
 {
     /**
-     * The create user service.
+     * The create category service.
      *
      * @var CreateCategoryService
      */
     protected $createCategoryService;
 
-    public function __construct(CreateCategoryService $createCategoryService)
+    /**
+     * The update category service.
+     *
+     * @var UpdateCategoryService
+     */
+    protected $updateCategoryService;
+
+    public function __construct(CreateCategoryService $createCategoryService, UpdateCategoryService $updateCategoryService)
     {
         $this->createCategoryService = $createCategoryService;
+        $this->updateCategoryService = $updateCategoryService;
     }
 
     /**
@@ -67,7 +77,10 @@ class CategoryController extends ApiController
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $dto = new UpdateCategoryDto(array_merge($request->all(), ['category' => $category]));
+        $result = $this->updateCategoryService->execute($dto);
+
+        return $this->resourceResponse('Category updated.', $result);
     }
 
     /**
