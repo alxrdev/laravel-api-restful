@@ -33,7 +33,7 @@ trait ApiResponse
      * @param  mixed    $error_details
      * @return JsonResponse
      */
-    protected function errorResponse($error_message, $status_code = 400, $error_details)
+    protected function errorResponse($error_message, $status_code = 400, $error_details = null)
     {
         return response()
             ->json([

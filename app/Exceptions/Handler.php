@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -46,7 +47,12 @@ class Handler extends ExceptionHandler
             return $this->convertValidationExceptionToResponse($e, $request);
         }
 
-        parent::render($request, $e);
+        if ($e instanceof ModelNotFoundException) {
+            $resource = strtolower(class_basename($e->getModel()));
+            return $this->errorResponse($resource . ' not found.', 404);
+        }
+
+        return parent::render($request, $e);
     }
 
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
