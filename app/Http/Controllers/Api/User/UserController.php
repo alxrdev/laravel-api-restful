@@ -3,11 +3,25 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\User\CreateUserRequest;
 use App\Models\User;
+use App\Services\User\CreateUserService;
 use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
+    /**
+     * The create user service.
+     *
+     * @var CreateUserService
+     */
+    protected $createUserService;
+
+    public function __construct(CreateUserService $createUserService)
+    {
+        $this->createUserService = $createUserService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,27 +36,12 @@ class UserController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\CreateUserRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
-        $rules = [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed'
-        ];
-
-        $this->validate($request, $rules);
-
-        $fields = $request->all();
-        $fields['password'] = bcrypt($request->password);
-        $fields['verified'] = User::UNVERIFIED_USER;
-        $fields['verification_token'] = User::verificationTokenGenerator();
-        $fields['admin'] = User::REGULAR_USER;
-
-        $user = User::create($fields);
-
+        $user = $this->createUserService->execute($request);
         return $this->resourceResponse('User created', $user, 201);
     }
 

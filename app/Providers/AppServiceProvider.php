@@ -26,4 +26,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
     }
+
+    /**
+     * All of the container singletons that should be registered.
+     *
+     * @var array
+     */
+    public $singletons = [
+        \App\Services\User\CreateUserService::class => \App\Services\User\CreateUserService::class
+    ];
 }
