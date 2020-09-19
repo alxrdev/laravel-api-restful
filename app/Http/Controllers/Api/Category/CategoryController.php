@@ -2,12 +2,26 @@
 
 namespace App\Http\Controllers\Api\Category;
 
+use App\Dtos\Category\CreateCategoryDto;
 use App\Http\Controllers\Api\ApiController;
 use App\Models\Category;
+use App\Services\Category\CreateCategoryService;
 use Illuminate\Http\Request;
 
 class CategoryController extends ApiController
 {
+    /**
+     * The create user service.
+     *
+     * @var CreateCategoryService
+     */
+    protected $createCategoryService;
+
+    public function __construct(CreateCategoryService $createCategoryService)
+    {
+        $this->createCategoryService = $createCategoryService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +41,10 @@ class CategoryController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+        $dto = new CreateCategoryDto($request->all());
+        $category = $this->createCategoryService->execute($dto);
+
+        return $this->resourceResponse('Category created.', $category, 201);
     }
 
     /**
