@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use App\Services\User\CreateUserService;
-use Illuminate\Http\Request;
+use App\Services\User\UpdateUserService;
 
 class UserController extends ApiController
 {
@@ -17,9 +18,17 @@ class UserController extends ApiController
      */
     protected $createUserService;
 
-    public function __construct(CreateUserService $createUserService)
+    /**
+     * The update user service.
+     *
+     * @var UpdateUserService
+     */
+    protected $updateUserService;
+
+    public function __construct(CreateUserService $createUserService, UpdateUserService $updateUserService)
     {
         $this->createUserService = $createUserService;
+        $this->updateUserService = $updateUserService;
     }
 
     /**
@@ -59,50 +68,13 @@ class UserController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  User  $user
+     * @param  UpdateUserRequest  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, int $id)
     {
-        $user = User::findOrFail($user);
-
-        $rules = [
-            'email' => 'email|unique:users,email,' . $user->id,
-            'password' => 'min:6|confirmed',
-            'admin' => 'in:' . User::ADMIN_USER . ',' . User::REGULAR_USER
-        ];
-
-        $this->validate($request, $rules);
-
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
-
-        if ($request->has('email') && $user->email != $request->email) {
-            $user->verified = User::UNVERIFIED_USER;
-            $user->verification_token = User::verificationTokenGenerator();
-            $user->email = $request->email;
-        }
-
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->password);
-        }
-
-        if ($request->has('admin')) {
-            if (!$user->isVerified()) {
-                return $this->errorResponse('User must be verified to change admin value.', 409);
-            }
-
-            $user->admin = $request->admin;
-        }
-
-        if (!$user->isDirty()) {
-            return $this->errorResponse('At least one value must be modified to update the user.', 409);
-        }
-
-        $user->save();
-
+        $user = $this->updateUserService->execute($request, $id);
         return $this->resourceResponse('User updated.', $user, 200);
     }
 
