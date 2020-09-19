@@ -91,6 +91,7 @@ class CategoryController extends ApiController
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return $this->successResponse('Category deleted.', 204);
     }
 }
