@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Dtos\User\CreateUserDto;
+use App\Dtos\User\UpdateUserDto;
 use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use App\Services\User\CreateUserService;
 use App\Services\User\UpdateUserService;
@@ -75,9 +75,11 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, int $id)
+    public function update(Request $request, int $id)
     {
-        $user = $this->updateUserService->execute($request, $id);
+        $dto = new UpdateUserDto(array_merge($request->all(), ['id' => $id]));
+        $user = $this->updateUserService->execute($dto);
+
         return $this->resourceResponse('User updated.', $user, 200);
     }
 

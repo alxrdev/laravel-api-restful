@@ -2,42 +2,53 @@
 
 namespace App\Services\User;
 
+use App\Dtos\IDto;
+use App\Dtos\User\UpdateUserDto;
 use App\Exceptions\AppError;
-use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
+use App\Services\AbstractService;
 
-class UpdateUserService
+class UpdateUserService extends AbstractService
 {
-    public function execute(UpdateUserRequest $request, int $id) : User
+    /**
+     * Execute the service
+     * 
+     * @param  UpdateUserDto    $dto
+     * @throws AppError
+     * @return User             $user
+     */
+    public function execute(IDto $dto) : User
     {
-        $user = User::findOrFail($id);        
+        $this->isTheCorrectDto(UpdateUserDto::class, $dto);
+        
+        $user = User::findOrFail($dto->id);
 
-        if ($request->has('name')) {
-            $user->name = $request->name;
+        if ($dto->name) {
+            $user->name = $dto->name;
         }
 
-        if ($request->has('email') && $user->email != $request->email) {
-            $tempUser = User::where('email', $request->email)->first();
+        if ($dto->email && $user->email != $dto->email) {
+            $tempUser = User::where('email', $dto->email)->first();
 
             if (!$tempUser) {
                 $user->verified = User::UNVERIFIED_USER;
                 $user->verification_token = User::verificationTokenGenerator();
-                $user->email = $request->email;
+                $user->email = $dto->email;
             } else {
                 throw new AppError('An user with this email already exists', 409);
             }
         }
 
-        if ($request->has('password')) {
-            $user->password = bcrypt($request->password);
+        if ($dto->password) {
+            $user->password = bcrypt($dto->password);
         }
 
-        if ($request->has('admin')) {
+        if ($dto->admin) {
             if (!$user->isVerified()) {
                 throw new AppError('User must be verified to change admin value.', 409);
             }
 
-            $user->admin = $request->admin;
+            $user->admin = $dto->admin;
         }
 
         if (!$user->isDirty()) {
