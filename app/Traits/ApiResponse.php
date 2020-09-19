@@ -49,11 +49,11 @@ trait ApiResponse
      * Sends a JSON resources collection response to the consumer.
      *
      * @param  string       $message
-     * @param  Collection   $collection
+     * @param  array        $collection
      * @param  int          $status_code
      * @return JsonResponse
      */
-    protected function collectionResponse($message, Collection $collection, $status_code = 200)
+    protected function collectionResponse($message, $collection, $status_code = 200)
     {
         return $this->successResponse($message, $status_code, $collection);
     }
@@ -66,7 +66,7 @@ trait ApiResponse
      * @param  int      $status_code
      * @return JsonResponse
      */
-    protected function resourceResponse($message, Model $instance, $status_code = 200)
+    protected function resourceResponse($message, $instance, $status_code = 200)
     {
         return $this->successResponse($message, $status_code, $instance);
     }

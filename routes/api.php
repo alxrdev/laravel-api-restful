@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Buyer\BuyerController;
+use App\Http\Controllers\Api\Buyer\BuyerProductController;
 use App\Http\Controllers\Api\Buyer\BuyerTransactionController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Product\ProductController;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('buyers', BuyerController::class)->only(['index', 'show']);
 Route::resource('buyers.transactions', BuyerTransactionController::class)->only(['index']);
+Route::resource('buyers.products', BuyerProductController::class)->only(['index']);
 
 Route::resource('categories', CategoryController::class)->except([
     'create', 'edit'
