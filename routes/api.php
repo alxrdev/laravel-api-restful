@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Buyer\BuyerController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Seller\SellerController;
+use App\Http\Controllers\Api\Transaction\TransactionCategoryController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\UserController;
 
@@ -33,9 +34,8 @@ Route::resource('products', ProductController::class)->only([
     'index', 'show'
 ]);
 
-Route::resource('transactions', TransactionController::class)->only([
-    'index', 'show'
-]);
+Route::resource('transactions', TransactionController::class)->only(['index', 'show']);
+Route::resource('transactions.categories', TransactionCategoryController::class)->only(['index']);
 
 Route::resource('sellers', SellerController::class)->only([
     'index', 'show'
