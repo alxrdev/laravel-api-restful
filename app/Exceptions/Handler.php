@@ -48,6 +48,10 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+        if ($e instanceof AppError) {
+            return $this->errorResponse($e->getMessage(), $e->status);
+        }
+
         if ($e instanceof ValidationException) {
             return $this->convertValidationExceptionToResponse($e, $request);
         }
