@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\ApiController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -16,13 +16,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'All users',
-                'data' => $users
-            ], 200);
+        return $this->collectionResponse('All users', $users);
     }
 
     /**
@@ -49,12 +43,7 @@ class UserController extends Controller
 
         $user = User::create($fields);
 
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'User created',
-                'data' => $user
-            ], 201);
+        return $this->resourceResponse('User created', $user, 201);
     }
 
     /**
@@ -66,13 +55,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'Showing user',
-                'data' => $user
-            ], 200);
+        return $this->resourceResponse('Showing user', $user, 200);
     }
 
     /**
@@ -110,36 +93,19 @@ class UserController extends Controller
 
         if ($request->has('admin')) {
             if (!$user->isVerified()) {
-                return response()
-                    ->json([
-                        'success' => false,
-                        'message' => 'Ops! We have an error :(',
-                        'error_message' => 'User must be verified to change admin value.',
-                        'error_status_code' => 409
-                    ], 409);
+                return $this->errorResponse('User must be verified to change admin value.', 409);
             }
 
             $user->admin = $request->admin;
         }
 
         if (!$user->isDirty()) {
-            return response()
-                ->json([
-                    'success' => false,
-                    'message' => 'Ops! We have an error :(',
-                    'error_message' => 'At least one value must be modified to update the user.',
-                    'error_status_code' => 409
-                ], 409);
+            return $this->errorResponse('At least one value must be modified to update the user.', 409);
         }
 
         $user->save();
 
-        return response()
-            ->json([
-                'success' => true,
-                'message' => 'User updated.',
-                'data' => $user
-            ], 200);
+        return $this->resourceResponse('User updated.', $user, 200);
     }
 
     /**
