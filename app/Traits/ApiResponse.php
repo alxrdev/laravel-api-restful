@@ -15,7 +15,7 @@ trait ApiResponse
      * @param  mixed    $data
      * @return JsonResponse
      */
-    private function successResponse($message, $status_code = 200, $data)
+    protected function successResponse($message, $status_code = 200, $data = null)
     {
         return response()
             ->json([
