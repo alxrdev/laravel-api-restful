@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use App\Dtos\User\CreateUserDto;
 use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use App\Services\User\CreateUserService;
 use App\Services\User\UpdateUserService;
+use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
@@ -45,12 +46,14 @@ class UserController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\CreateUserRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateUserRequest $request)
+    public function store(Request $request)
     {
-        $user = $this->createUserService->execute($request);
+        $dto = new CreateUserDto($request->all());
+        $user = $this->createUserService->execute($dto);
+
         return $this->resourceResponse('User created', $user, 201);
     }
 

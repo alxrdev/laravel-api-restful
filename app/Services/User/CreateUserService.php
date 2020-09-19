@@ -2,16 +2,27 @@
 
 namespace App\Services\User;
 
-use App\Http\Requests\User\CreateUserRequest;
+use App\Dtos\IDto;
+use App\Dtos\User\CreateUserDto;
 use App\Models\User;
+use App\Services\AbstractService;
 
-class CreateUserService
+class CreateUserService extends AbstractService
 {
-    public function execute(CreateUserRequest $request) : User
+    /**
+     * Execute the service
+     * 
+     * @param  CreateUserDto    $dto
+     * @throws AppError
+     * @return User             $user
+     */
+    public function execute(IDto $dto) : User
     {
-        $fields = $request->all();
+        $this->isTheCorrectDto(CreateUserDto::class, $dto);
 
-        $fields['password'] = bcrypt($request->password);
+        $fields = $dto->getAllProperties();
+
+        $fields['password'] = bcrypt($dto->password);
         $fields['verified'] = User::UNVERIFIED_USER;
         $fields['verification_token'] = User::verificationTokenGenerator();
         $fields['admin'] = User::REGULAR_USER;
