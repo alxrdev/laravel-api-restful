@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Category\CategorySellerController;
 use App\Http\Controllers\Api\Category\CategoryTransactionController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Seller\SellerController;
+use App\Http\Controllers\Api\Seller\SellerTransactionController;
 use App\Http\Controllers\Api\Transaction\TransactionCategoryController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\Transaction\TransactionSellerController;
@@ -42,17 +43,14 @@ Route::resource('categories.sellers', CategorySellerController::class)->only(['i
 Route::resource('categories.transactions', CategoryTransactionController::class)->only(['index']);
 Route::resource('categories.buyers', CategoryBuyerController::class)->only(['index']);
 
-Route::resource('products', ProductController::class)->only([
-    'index', 'show'
-]);
+Route::resource('products', ProductController::class)->only(['index', 'show']);
 
 Route::resource('transactions', TransactionController::class)->only(['index', 'show']);
 Route::resource('transactions.categories', TransactionCategoryController::class)->only(['index']);
 Route::resource('transactions.sellers', TransactionSellerController::class)->only(['index']);
 
-Route::resource('sellers', SellerController::class)->only([
-    'index', 'show'
-]);
+Route::resource('sellers', SellerController::class)->only(['index', 'show']);
+Route::resource('sellers.transactions', SellerTransactionController::class)->only(['index']);
 
 Route::resource('users', UserController::class)->except([
     'create', 'edit'
