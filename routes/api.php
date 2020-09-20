@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Seller\SellerBuyerController;
 use App\Http\Controllers\Api\Seller\SellerCategoryController;
 use App\Http\Controllers\Api\Seller\SellerController;
+use App\Http\Controllers\Api\Seller\SellerProductController;
 use App\Http\Controllers\Api\Seller\SellerTransactionController;
 use App\Http\Controllers\Api\Transaction\TransactionCategoryController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
@@ -55,6 +56,7 @@ Route::resource('sellers', SellerController::class)->only(['index', 'show']);
 Route::resource('sellers.transactions', SellerTransactionController::class)->only(['index']);
 Route::resource('sellers.categories', SellerCategoryController::class)->only(['index']);
 Route::resource('sellers.buyers', SellerBuyerController::class)->only(['index']);
+Route::resource('sellers.products', SellerProductController::class)->except(['create', 'show', 'edit']);
 
 Route::resource('users', UserController::class)->except([
     'create', 'edit'
