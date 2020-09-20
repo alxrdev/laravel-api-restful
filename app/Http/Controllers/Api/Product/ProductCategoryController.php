@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Models\Category;
 use App\Models\Product;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -28,11 +29,15 @@ class ProductCategoryController extends ApiController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Product  $product
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, Category $category)
     {
-        //
+        $product->categories()->syncWithoutDetaching([$category->id]);
+        $categories = $product->categories;
+
+        return $this->collectionResponse('Category attached', $categories);
     }
 
     /**
