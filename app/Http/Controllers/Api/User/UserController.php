@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Dtos\User\CreateUserDto;
-use App\Dtos\User\UpdateUserDto;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use App\Services\User\CreateUserService;
 use App\Services\User\UpdateUserService;
-use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
@@ -33,7 +31,6 @@ class UserController extends ApiController
     public function store(CreateUserRequest $request)
     {
         $user = (new CreateUserService())->execute($request);
-
         return $this->resourceResponse('User created', $user, 201);
     }
 
@@ -52,15 +49,13 @@ class UserController extends ApiController
      * Update the specified resource in storage.
      *
      * @param  UpdateUserRequest  $request
-     * @param  int  $id
+     * @param  User               $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $dto = new UpdateUserDto(array_merge($request->all(), ['id' => $id]));
-        $user = (new UpdateUserService())->updateUserService->execute($dto);
-
-        return $this->resourceResponse('User updated.', $user, 200);
+        $userResponse = (new UpdateUserService())->execute($request, $user);
+        return $this->resourceResponse('User updated.', $userResponse, 200);
     }
 
     /**

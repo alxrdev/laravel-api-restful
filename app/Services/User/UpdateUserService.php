@@ -2,28 +2,22 @@
 
 namespace App\Services\User;
 
-use App\Dtos\IDto;
-use App\Dtos\User\UpdateUserDto;
 use App\Exceptions\AppError;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
-use App\Services\AbstractService;
 
-class UpdateUserService extends AbstractService
+class UpdateUserService
 {
     /**
      * Execute the service
      * 
-     * @param  UpdateUserDto    $dto
+     * @param  UpdateUserRequest    $request
      * @throws AppError
-     * @return User             $user
+     * @return User                 $user
      */
-    public function execute(IDto $dto) : User
+    public function execute(UpdateUserRequest $request, User $user) : User
     {
-        $this->isTheCorrectDto(UpdateUserDto::class, $dto);
-        
-        $user = User::findOrFail($dto->id);
-
-        $user = $this->handleChanges($dto, $user);
+        $user = $this->handleChanges($request, $user);
 
         if (!$user->isDirty()) {
             throw new AppError('At least one value must be modified to update the user.', 409);
@@ -34,35 +28,35 @@ class UpdateUserService extends AbstractService
         return $user;
     }
 
-    private function handleChanges(UpdateUserDto $dto, User $user) : User
+    private function handleChanges(UpdateUserRequest $request, User $user) : User
     {
-        $user = $this->theNameHasChanged($dto, $user);
+        $user = $this->theNameHasChanged($request, $user);
 
-        $user = $this->theEmailHasChanged($dto, $user);
+        $user = $this->theEmailHasChanged($request, $user);
 
-        $user = $this->thePasswordHasChanged($dto, $user);
+        $user = $this->thePasswordHasChanged($request, $user);
 
-        $user = $this->theAdminHasChanged($dto, $user);
+        $user = $this->theAdminHasChanged($request, $user);
 
         return $user;
     }
 
-    private function theNameHasChanged(UpdateUserDto $dto, User $user) : User
+    private function theNameHasChanged(UpdateUserRequest $request, User $user) : User
     {
-        if ($dto->name) {
-            $user->name = $dto->name;
+        if ($request->name) {
+            $user->name = $request->name;
         }
 
         return $user;
     }
 
-    private function theEmailHasChanged(UpdateUserDto $dto, User $user) : User
+    private function theEmailHasChanged(UpdateUserRequest $request, User $user) : User
     {
-        if (!$dto->email || $user->email == $dto->email) {
+        if (!$request->email || $user->email == $request->email) {
             return $user;
         }
 
-        $tempUser = User::where('email', $dto->email)->first();
+        $tempUser = User::where('email', $request->email)->first();
 
         if ($tempUser) {
             throw new AppError('An user with this email already exists', 409);
@@ -70,23 +64,23 @@ class UpdateUserService extends AbstractService
 
         $user->verified = User::UNVERIFIED_USER;
         $user->verification_token = User::verificationTokenGenerator();
-        $user->email = $dto->email;
+        $user->email = $request->email;
 
         return $user;
     }
 
-    private function thePasswordHasChanged(UpdateUserDto $dto, User $user) : User
+    private function thePasswordHasChanged(UpdateUserRequest $request, User $user) : User
     {
-        if ($dto->password) {
-            $user->password = bcrypt($dto->password);
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
         }
 
         return $user;
     }
 
-    private function theAdminHasChanged(UpdateUserDto $dto, User $user) : User
+    private function theAdminHasChanged(UpdateUserRequest $request, User $user) : User
     {
-        if (!$dto->admin) {
+        if (!$request->admin) {
             return $user;
         }
 
@@ -94,7 +88,7 @@ class UpdateUserService extends AbstractService
             throw new AppError('User must be verified to change admin value.', 409);
         }
 
-        $user->admin = $dto->admin;
+        $user->admin = $request->admin;
 
         return $user;
     }
