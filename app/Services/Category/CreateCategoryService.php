@@ -2,25 +2,21 @@
 
 namespace App\Services\Category;
 
-use App\Dtos\Category\CreateCategoryDto;
-use App\Dtos\IDto;
+use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Models\Category;
-use App\Services\AbstractService;
 
-class CreateCategoryService extends AbstractService
+class CreateCategoryService
 {
     /**
      * Execute the service
      * 
-     * @param  CreateCategoryDto    $dto
+     * @param  CreateCategoryRequest    $request
      * @throws AppError
-     * @return Category              $category
+     * @return Category                 $category
      */
-    public function execute(IDto $dto) : Category
+    public function execute(CreateCategoryRequest $request) : Category
     {
-        $this->isTheCorrectDto(CreateCategoryDto::class, $dto);
-
-        $fields = $dto->getAllProperties();
+        $fields = $request->all();
 
         $category = Category::create($fields);
 

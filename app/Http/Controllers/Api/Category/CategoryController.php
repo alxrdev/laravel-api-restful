@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Category;
 
-use App\Dtos\Category\CreateCategoryDto;
 use App\Dtos\Category\UpdateCategoryDto;
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Models\Category;
 use App\Services\Category\CreateCategoryService;
 use App\Services\Category\UpdateCategoryService;
@@ -26,14 +26,12 @@ class CategoryController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CreateCategoryRequest        $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-        $dto = new CreateCategoryDto($request->all());
-        $category = (new CreateCategoryService())->createCategoryService->execute($dto);
-
+        $category = (new CreateCategoryService())->execute($request);
         return $this->resourceResponse('Category created.', $category, 201);
     }
 
