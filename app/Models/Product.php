@@ -16,6 +16,10 @@ class Product extends Model
         'name', 'description', 'quantity', 'status', 'image', 'seller_id'
     ];
 
+    protected $hidden = [
+        'pivot'
+    ];
+
     public function isAvailable(): Bool
     {
         return $this->status == Product::PRODUCT_AVAILABLE;

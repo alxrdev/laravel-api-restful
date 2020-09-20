@@ -13,6 +13,10 @@ class Category extends Model
         'name', 'description'
     ];
 
+    protected $hidden = [
+        'pivot'
+    ];
+
     public function products() {
         return $this->belongsToMany('App\Models\Product');
     }
