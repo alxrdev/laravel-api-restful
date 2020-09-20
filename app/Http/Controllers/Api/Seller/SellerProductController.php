@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api\Seller;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Seller\CreateProductRequest;
+use App\Http\Requests\Seller\UpdateProductRequest;
+use App\Models\Product;
 use App\Models\Seller;
 use App\Models\User;
 use App\Services\Seller\CreateProductService;
+use App\Services\Seller\UpdateProductService;
 use Illuminate\Http\Request;
 
 class SellerProductController extends ApiController
@@ -27,7 +30,7 @@ class SellerProductController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\Seller\CreateProductRequest  $request
-     * @param  \App\Models\User                                $user
+     * @param  \App\Models\User                                $seller
      * @return \Illuminate\Http\Response
      */
     public function store(CreateProductRequest $request, User $seller)
@@ -39,13 +42,15 @@ class SellerProductController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\Seller\UpdateProductRequest  $request
      * @param  \App\Models\Seller  $seller
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Seller $seller)
+    public function update(UpdateProductRequest $request, Seller $seller, Product $product)
     {
-        //
+        $product = (new UpdateProductService())->execute($request, $seller, $product);
+        return $this->resourceResponse('Product updated', $product);
     }
 
     /**
