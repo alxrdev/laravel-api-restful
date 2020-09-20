@@ -2,28 +2,23 @@
 
 namespace App\Services\Category;
 
-use App\Dtos\Category\UpdateCategoryDto;
-use App\Dtos\IDto;
 use App\Exceptions\AppError;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
-use App\Services\AbstractService;
 
-class UpdateCategoryService extends AbstractService
+class UpdateCategoryService
 {
     /**
      * Execute the service
      * 
-     * @param  UpdateCategoryDto    $dto
+     * @param  UpdateCategoryRequest    $request
+     * @param  Category                 $category
      * @throws AppError
-     * @return Category              $category
+     * @return Category                 $category
      */
-    public function execute(IDto $dto) : Category
+    public function execute(UpdateCategoryRequest $request, Category $category) : Category
     {
-        $this->isTheCorrectDto(UpdateCategoryDto::class, $dto);
-
-        $category = $dto->category;
-
-        $category->fill($dto->getAllProperties());
+        $category->fill($request->all());
 
         if ($category->isClean()) {
             throw new AppError('At least one value must be modified to update the category.', 409);

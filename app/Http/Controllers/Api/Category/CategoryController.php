@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\Category;
 
-use App\Dtos\Category\UpdateCategoryDto;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Category\CreateCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Services\Category\CreateCategoryService;
 use App\Services\Category\UpdateCategoryService;
-use Illuminate\Http\Request;
 
 class CategoryController extends ApiController
 {
@@ -49,15 +48,13 @@ class CategoryController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param  UpdateCategoryRequest        $request
+     * @param  \App\Models\Category         $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $dto = new UpdateCategoryDto(array_merge($request->all(), ['category' => $category]));
-        $result = (new UpdateCategoryService())->updateCategoryService->execute($dto);
-
+        $result = (new UpdateCategoryService())->execute($request, $category);
         return $this->resourceResponse('Category updated.', $result);
     }
 
