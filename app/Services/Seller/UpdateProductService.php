@@ -6,9 +6,12 @@ use App\Exceptions\AppError;
 use App\Http\Requests\Seller\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Seller;
+use App\Traits\CheckProductOwner;
 
 class UpdateProductService
 {
+    use CheckProductOwner;
+
     /**
      * Execute the service
      * 
@@ -20,9 +23,7 @@ class UpdateProductService
      */
     public function execute(UpdateProductRequest $request, Seller $seller, Product $product): Product
     {
-        if ($seller->id != $product->seller_id) {
-            throw new AppError('The informed seller is not the product owner', 422);
-        }
+        $this->checkProductOwner($seller, $product);
 
         $product->fill($request->only([
             'name',

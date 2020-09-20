@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Seller;
 use App\Models\User;
 use App\Services\Seller\CreateProductService;
+use App\Services\Seller\DeleteProductService;
 use App\Services\Seller\UpdateProductService;
 use Illuminate\Http\Request;
 
@@ -57,10 +58,12 @@ class SellerProductController extends ApiController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Seller  $seller
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Seller $seller)
+    public function destroy(Seller $seller, Product $product)
     {
-        //
+        (new DeleteProductService())->execute($seller, $product);
+        return $this->successResponse('Product deleted', 204);
     }
 }
