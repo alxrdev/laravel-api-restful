@@ -13,26 +13,6 @@ use Illuminate\Http\Request;
 class CategoryController extends ApiController
 {
     /**
-     * The create category service.
-     *
-     * @var CreateCategoryService
-     */
-    protected $createCategoryService;
-
-    /**
-     * The update category service.
-     *
-     * @var UpdateCategoryService
-     */
-    protected $updateCategoryService;
-
-    public function __construct(CreateCategoryService $createCategoryService, UpdateCategoryService $updateCategoryService)
-    {
-        $this->createCategoryService = $createCategoryService;
-        $this->updateCategoryService = $updateCategoryService;
-    }
-
-    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -52,7 +32,7 @@ class CategoryController extends ApiController
     public function store(Request $request)
     {
         $dto = new CreateCategoryDto($request->all());
-        $category = $this->createCategoryService->execute($dto);
+        $category = (new CreateCategoryService())->createCategoryService->execute($dto);
 
         return $this->resourceResponse('Category created.', $category, 201);
     }
@@ -78,7 +58,7 @@ class CategoryController extends ApiController
     public function update(Request $request, Category $category)
     {
         $dto = new UpdateCategoryDto(array_merge($request->all(), ['category' => $category]));
-        $result = $this->updateCategoryService->execute($dto);
+        $result = (new UpdateCategoryService())->updateCategoryService->execute($dto);
 
         return $this->resourceResponse('Category updated.', $result);
     }

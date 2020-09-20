@@ -13,26 +13,6 @@ use Illuminate\Http\Request;
 class UserController extends ApiController
 {
     /**
-     * The create user service.
-     *
-     * @var CreateUserService
-     */
-    protected $createUserService;
-
-    /**
-     * The update user service.
-     *
-     * @var UpdateUserService
-     */
-    protected $updateUserService;
-
-    public function __construct(CreateUserService $createUserService, UpdateUserService $updateUserService)
-    {
-        $this->createUserService = $createUserService;
-        $this->updateUserService = $updateUserService;
-    }
-
-    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -52,7 +32,7 @@ class UserController extends ApiController
     public function store(Request $request)
     {
         $dto = new CreateUserDto($request->all());
-        $user = $this->createUserService->execute($dto);
+        $user = (new CreateUserService())->createUserService->execute($dto);
 
         return $this->resourceResponse('User created', $user, 201);
     }
@@ -78,7 +58,7 @@ class UserController extends ApiController
     public function update(Request $request, int $id)
     {
         $dto = new UpdateUserDto(array_merge($request->all(), ['id' => $id]));
-        $user = $this->updateUserService->execute($dto);
+        $user = (new UpdateUserService())->updateUserService->execute($dto);
 
         return $this->resourceResponse('User updated.', $user, 200);
     }
