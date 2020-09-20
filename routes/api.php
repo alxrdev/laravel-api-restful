@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Buyer\BuyerController;
 use App\Http\Controllers\Api\Buyer\BuyerProductController;
 use App\Http\Controllers\Api\Buyer\BuyerSellerController;
 use App\Http\Controllers\Api\Buyer\BuyerTransactionController;
+use App\Http\Controllers\Api\Category\CategoryBuyerController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Category\CategoryProductController;
 use App\Http\Controllers\Api\Category\CategorySellerController;
@@ -39,6 +40,7 @@ Route::resource('categories', CategoryController::class)->except(['create', 'edi
 Route::resource('categories.products', CategoryProductController::class)->only(['index']);
 Route::resource('categories.sellers', CategorySellerController::class)->only(['index']);
 Route::resource('categories.transactions', CategoryTransactionController::class)->only(['index']);
+Route::resource('categories.buyers', CategoryBuyerController::class)->only(['index']);
 
 Route::resource('products', ProductController::class)->only([
     'index', 'show'
