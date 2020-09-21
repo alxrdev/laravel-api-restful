@@ -6,6 +6,7 @@ use App\Exceptions\AppError;
 use App\Models\Product;
 use App\Models\Seller;
 use App\Traits\CheckProductOwner;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteProductService
 {
@@ -21,6 +22,9 @@ class DeleteProductService
     public function execute(Seller $seller, Product $product): void
     {
         $this->checkProductOwner($seller, $product);
+
+        Storage::delete($product->image);
+
         $product->delete();
     }
 }
