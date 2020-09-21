@@ -66,6 +66,6 @@ Route::resource('sellers.categories', SellerCategoryController::class)->only(['i
 Route::resource('sellers.buyers', SellerBuyerController::class)->only(['index']);
 Route::resource('sellers.products', SellerProductController::class)->except(['create', 'show', 'edit']);
 
-Route::resource('users', UserController::class)->except([
-    'create', 'edit'
-]);
+Route::resource('users', UserController::class)->except([ 'create', 'edit']);
+Route::get('users/verify/{token}', [UserController::class, 'verify'])->name('verify');
+Route::get('users/{user}/resend', [UserController::class, 'resend'])->name('resend');

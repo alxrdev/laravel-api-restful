@@ -50,7 +50,7 @@ class UpdateUserService
     private function handleNameChange()
     {
         if ($this->request->name) {
-            $this->user->name = $this->name;
+            $this->user->name = $this->request->name;
         }
     }
 

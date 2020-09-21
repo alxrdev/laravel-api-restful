@@ -25,7 +25,6 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric',
             'email' => 'email',
             'password' => 'min:6|confirmed',
             'admin' => 'in:' . User::ADMIN_USER . ',' . User::REGULAR_USER
