@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\Seller\CreateProductService;
 use App\Services\Seller\DeleteProductService;
 use App\Services\Seller\UpdateProductService;
-use Illuminate\Http\Request;
 
 class SellerProductController extends ApiController
 {
@@ -50,7 +49,7 @@ class SellerProductController extends ApiController
      */
     public function update(UpdateProductRequest $request, Seller $seller, Product $product)
     {
-        $product = (new UpdateProductService())->execute($request, $seller, $product);
+        $product = (new UpdateProductService($request, $seller, $product))->execute();
         return $this->resourceResponse('Product updated', $product);
     }
 
