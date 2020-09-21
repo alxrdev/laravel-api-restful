@@ -54,7 +54,7 @@ class UserController extends ApiController
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $userResponse = (new UpdateUserService())->execute($request, $user);
+        $userResponse = (new UpdateUserService($request, $user))->execute();
         return $this->resourceResponse('User updated.', $userResponse, 200);
     }
 

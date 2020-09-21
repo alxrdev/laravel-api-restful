@@ -9,87 +9,92 @@ use App\Models\User;
 class UpdateUserService
 {
     /**
+     * @var UpdateUserRequest
+     */
+    private $request;
+
+    /**
+     * @var User
+     */
+    private $user;
+
+    public function __construct(UpdateUserRequest $request, User $user)
+    {
+        $this->request = $request;
+        $this->user = $user;
+    }
+
+    /**
      * Execute the service
      * 
-     * @param  UpdateUserRequest    $request
      * @throws AppError
      * @return User                 $user
      */
-    public function execute(UpdateUserRequest $request, User $user) : User
+    public function execute() : User
     {
-        $user = $this->handleChanges($request, $user);
+        $this->handleNameChange();
 
-        if (!$user->isDirty()) {
-            throw new AppError('At least one value must be modified to update the user.', 409);
-        }
+        $this->handleEmailChange();
 
-        $user->save();
+        $this->handlePasswordChange();
 
-        return $user;
+        $this->handleAdminChange();
+
+        $this->userHasNotChanged();
+
+        $this->user->save();
+
+        return $this->user;
     }
 
-    private function handleChanges(UpdateUserRequest $request, User $user) : User
+    private function handleNameChange()
     {
-        $user = $this->theNameHasChanged($request, $user);
-
-        $user = $this->theEmailHasChanged($request, $user);
-
-        $user = $this->thePasswordHasChanged($request, $user);
-
-        $user = $this->theAdminHasChanged($request, $user);
-
-        return $user;
+        if ($this->request->name) {
+            $this->user->name = $this->name;
+        }
     }
 
-    private function theNameHasChanged(UpdateUserRequest $request, User $user) : User
+    private function handleEmailChange()
     {
-        if ($request->name) {
-            $user->name = $request->name;
+        if (!$this->request->email || $this->user->email == $this->request->email) {
+            return false;
         }
 
-        return $user;
-    }
-
-    private function theEmailHasChanged(UpdateUserRequest $request, User $user) : User
-    {
-        if (!$request->email || $user->email == $request->email) {
-            return $user;
-        }
-
-        $tempUser = User::where('email', $request->email)->first();
+        $tempUser = User::where('email', $this->request->email)->first();
 
         if ($tempUser) {
             throw new AppError('An user with this email already exists', 409);
         }
 
-        $user->verified = User::UNVERIFIED_USER;
-        $user->verification_token = User::verificationTokenGenerator();
-        $user->email = $request->email;
-
-        return $user;
+        $this->user->verified = User::UNVERIFIED_USER;
+        $this->user->verification_token = User::verificationTokenGenerator();
+        $this->user->email = $this->request->email;
     }
 
-    private function thePasswordHasChanged(UpdateUserRequest $request, User $user) : User
+    private function handlePasswordChange()
     {
-        if ($request->password) {
-            $user->password = bcrypt($request->password);
+        if ($this->request->password) {
+            $this->user->password = bcrypt($this->request->password);
         }
-
-        return $user;
     }
 
-    private function theAdminHasChanged(UpdateUserRequest $request, User $user) : User
+    private function handleAdminChange()
     {
-        if (!$request->admin) {
-            return $user;
+        if (!$this->request->admin) {
+            return false;
         }
 
-        if (!$user->isVerified()) {
+        if (!$this->user->isVerified()) {
             throw new AppError('User must be verified to change admin value.', 409);
         }
 
-        $user->admin = $request->admin;
+        $this->user->admin = $this->request->admin;
+    }
 
-        return $user;
+    private function userHasNotChanged()
+    {
+        if (!$this->user->isDirty()) {
+            throw new AppError('At least one value must be modified to update the user.', 409);
+        }
     }
 }
