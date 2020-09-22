@@ -10,18 +10,29 @@ use App\Services\User\CreateUserService;
 use App\Services\User\ResendUserVerificationEmailService;
 use App\Services\User\UpdateUserService;
 use App\Services\User\VerifyUserService;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class UserController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return $this->collectionResponse('All users', $users);
+        $users = $this->sortedFilteredAndPaginatedCollection(
+            User::all(),
+            $request,
+            ['name','created_at'],
+            ['admin', 'verified']
+        );
+        
+        return $this->paginatedResponse('All users', $users);
     }
 
     /**

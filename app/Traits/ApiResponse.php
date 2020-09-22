@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponse
 {
@@ -69,5 +69,25 @@ trait ApiResponse
     protected function resourceResponse($message, $instance, $status_code = 200)
     {
         return $this->successResponse($message, $status_code, $instance);
+    }
+
+    /**
+     * Sends a paginated JSON response to the consumer.
+     *
+     * @param  string   $message
+     * @param  int      $status_code
+     * @param  mixed    $data
+     * @return JsonResponse
+     */
+    protected function paginatedResponse($message, LengthAwarePaginator $data, $status_code = 200)
+    {
+        return response()
+            ->json(
+                array_merge(
+                    ['success' => true, 'message' => $message], 
+                    $data->toArray()
+                ),
+                $status_code
+            );
     }
 }
