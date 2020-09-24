@@ -3,19 +3,24 @@
 namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class TransactionController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::all();
-        return $this->collectionResponse('All transactions', $transactions);
+        $transactions = $this->sortedFilteredAndPaginatedCollection(Transaction::all(), $request, ['quantity', 'created_at'], [], TransactionResource::class);
+        return $this->paginatedResponse('All transactions', $transactions);
     }
 
     /**
@@ -26,6 +31,6 @@ class TransactionController extends ApiController
      */
     public function show(Transaction $transaction)
     {
-        return $this->resourceResponse('Showing transaction', $transaction);
+        return $this->resourceResponse('Showing transaction', new TransactionResource($transaction));
     }
 }
