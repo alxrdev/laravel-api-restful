@@ -15,13 +15,15 @@ trait CollectionListHelpers
      * @param  Request $request
      * @param  array $sortFields
      * @param  array $filterFields
+     * @param  string $responseClass
      * @return  LengthAwarePaginator
      */
-    protected function sortedFilteredAndPaginatedCollection(Collection $collection, Request $request, array $sortFields, array $filterFields) : LengthAwarePaginator
+    protected function sortedFilteredAndPaginatedCollection(Collection $collection, Request $request, array $sortFields, array $filterFields, string $responseClass = null) : LengthAwarePaginator
     {
         return $this->paginateCollection(
             $this->sortedAndFilteredCollection($collection, $request, $sortFields, $filterFields),
-            $request
+            $request,
+            $responseClass
         );
     }
 
@@ -86,14 +88,22 @@ trait CollectionListHelpers
      * 
      * @param  Collection $collection
      * @param  Request $request
+     * @param  string $responseClass
      * @return  LengthAwarePaginator
      */
-    protected function paginateCollection(Collection $collection, Request $request) : LengthAwarePaginator
+    protected function paginateCollection(Collection $collection, Request $request, string $responseClass = null) : LengthAwarePaginator
     {
         $page = $request->page ?? 1;
         $perPage = $request->per_page ?? 15;
         
         $results = $collection->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $results = ($responseClass)
+            ? call_user_func_array(
+                array($responseClass, 'collection'),
+                [$results]
+                )
+            : $results;
 
         $paginated = new LengthAwarePaginator($results, $collection->count(), $perPage, $page, [
             'path' => LengthAwarePaginator::resolveCurrentPath()
