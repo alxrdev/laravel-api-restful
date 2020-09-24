@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\Api\Buyer;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\BuyerResource;
 use App\Models\Buyer;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class BuyerController extends ApiController
 {
+    use CollectionListHelpers;
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $buyers = Buyer::has('transactions')->get();
+        $buyers = $this->sortedFilteredAndPaginatedCollection(Buyer::has('transactions')->get(), $request, ['created_at'], ['admin'], BuyerResource::class);
         return $this->collectionResponse('All buyers', $buyers);
     }
 
@@ -26,6 +31,6 @@ class BuyerController extends ApiController
      */
     public function show(Buyer $buyer)
     {
-        return $this->resourceResponse('Showing buyer', $buyer, 200);
+        return $this->resourceResponse('Showing buyer', new BuyerResource($buyer), 200);
     }
 }
