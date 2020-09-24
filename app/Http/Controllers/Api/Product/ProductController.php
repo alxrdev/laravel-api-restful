@@ -3,19 +3,24 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class ProductController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return $this->collectionResponse('All products', $products);
+        $products = $this->sortedFilteredAndPaginatedCollection(Product::all(), $request, ['quantity', 'created_at'], ['name', 'status'], ProductResource::class);
+        return $this->paginatedResponse('All products', $products);
     }
 
     /**
@@ -26,6 +31,6 @@ class ProductController extends ApiController
      */
     public function show(Product $product)
     {
-        return $this->resourceResponse('Showing product', $product);
+        return $this->resourceResponse('Showing product', new ProductResource($product));
     }
 }
