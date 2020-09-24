@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Services\User\CreateUserService;
 use App\Services\User\ResendUserVerificationEmailService;
@@ -25,13 +26,7 @@ class UserController extends ApiController
      */
     public function index(Request $request)
     {
-        $users = $this->sortedFilteredAndPaginatedCollection(
-            User::all(),
-            $request,
-            ['name','created_at'],
-            ['admin', 'verified']
-        );
-        
+        $users = $this->sortedFilteredAndPaginatedCollection(User::all(), $request, ['name','created_at'], ['admin'], UserResource::class);
         return $this->paginatedResponse('All users', $users);
     }
 
@@ -44,7 +39,7 @@ class UserController extends ApiController
     public function store(CreateUserRequest $request)
     {
         $user = (new CreateUserService())->execute($request);
-        return $this->resourceResponse('User created', $user, 201);
+        return $this->resourceResponse('User created', new UserResource($user), 201);
     }
 
     /**
@@ -55,7 +50,7 @@ class UserController extends ApiController
      */
     public function show(User $user)
     {
-        return $this->resourceResponse('Showing user', $user, 200);
+        return $this->resourceResponse('Showing user', new UserResource($user), 200);
     }
 
     /**
@@ -68,7 +63,7 @@ class UserController extends ApiController
     public function update(UpdateUserRequest $request, User $user)
     {
         $userResponse = (new UpdateUserService($request, $user))->execute();
-        return $this->resourceResponse('User updated.', $userResponse, 200);
+        return $this->resourceResponse('User updated.', new UserResource($userResponse), 200);
     }
 
     /**
