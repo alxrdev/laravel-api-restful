@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Resources\User\UserResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\User\CreateUserService;
 use App\Services\User\ResendUserVerificationEmailService;
