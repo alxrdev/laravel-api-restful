@@ -5,21 +5,26 @@ namespace App\Http\Controllers\Api\Category;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\Category\CreateCategoryService;
 use App\Services\Category\UpdateCategoryService;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class CategoryController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return $this->collectionResponse('All categories', $categories);
+        $categories = $this->sortedFilteredAndPaginatedCollection(Category::all(), $request, ['name', 'created_at'], [], CategoryResource::class);
+        return $this->paginatedResponse('All categories', $categories);
     }
 
     /**
@@ -31,7 +36,7 @@ class CategoryController extends ApiController
     public function store(CreateCategoryRequest $request)
     {
         $category = (new CreateCategoryService())->execute($request);
-        return $this->resourceResponse('Category created.', $category, 201);
+        return $this->resourceResponse('Category created.', new CategoryResource($category), 201);
     }
 
     /**
@@ -42,7 +47,7 @@ class CategoryController extends ApiController
      */
     public function show(Category $category)
     {
-        return $this->resourceResponse('Showing category', $category);
+        return $this->resourceResponse('Showing category', new CategoryResource($category));
     }
 
     /**
@@ -55,7 +60,7 @@ class CategoryController extends ApiController
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $result = (new UpdateCategoryService())->execute($request, $category);
-        return $this->resourceResponse('Category updated.', $result);
+        return $this->resourceResponse('Category updated.', new CategoryResource($result));
     }
 
     /**
