@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\Api\Seller;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\SellerResource;
 use App\Models\Seller;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class SellerController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sellers = Seller::has('products')->get();
+        $sellers = $this->sortedFilteredAndPaginatedCollection(Seller::has('products')->get(), $request, ['created_at'], ['admin'], SellerResource::class);
         return $this->collectionResponse('All sellers', $sellers);
     }
 
@@ -26,6 +31,6 @@ class SellerController extends ApiController
      */
     public function show(Seller $seller)
     {
-        return $this->resourceResponse('All seller', $seller, 200);
+        return $this->resourceResponse('All seller', new SellerResource($seller), 200);
     }
 }
