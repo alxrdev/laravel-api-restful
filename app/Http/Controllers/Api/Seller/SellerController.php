@@ -20,7 +20,7 @@ class SellerController extends ApiController
     public function index(Request $request)
     {
         $sellers = $this->sortedFilteredAndPaginatedCollection(Seller::has('products')->get(), $request, ['created_at'], ['admin'], SellerResource::class);
-        return $this->collectionResponse('All sellers', $sellers);
+        return $this->paginatedResponse('All sellers', $sellers);
     }
 
     /**

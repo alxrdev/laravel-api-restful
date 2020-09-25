@@ -5,25 +5,30 @@ namespace App\Http\Controllers\Api\Seller;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Seller\CreateProductRequest;
 use App\Http\Requests\Seller\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Seller;
 use App\Models\User;
 use App\Services\Seller\CreateProductService;
 use App\Services\Seller\DeleteProductService;
 use App\Services\Seller\UpdateProductService;
+use App\Traits\CollectionListHelpers;
+use Illuminate\Http\Request;
 
 class SellerProductController extends ApiController
 {
+    use CollectionListHelpers;
+
     /**
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Seller $seller)
+    public function index(Seller $seller, Request $request)
     {
-        $products = $seller->products;
-        return $this->collectionResponse('All products', $products);
+        $products = $this->sortedFilteredAndPaginatedCollection($seller->products, $request, ['quantity', 'created_at'], ['name', 'status'], ProductResource::class);
+        return $this->paginatedResponse('All products', $products);
     }
 
     /**
@@ -36,7 +41,7 @@ class SellerProductController extends ApiController
     public function store(CreateProductRequest $request, User $seller)
     {
         $product = (new CreateProductService())->execute($request, $seller);
-        return $this->resourceResponse('Product created', $product, 201);
+        return $this->resourceResponse('Product created', new ProductResource($product), 201);
     }
 
     /**
@@ -50,7 +55,7 @@ class SellerProductController extends ApiController
     public function update(UpdateProductRequest $request, Seller $seller, Product $product)
     {
         $product = (new UpdateProductService($request, $seller, $product))->execute();
-        return $this->resourceResponse('Product updated', $product);
+        return $this->resourceResponse('Product updated', new ProductResource($product));
     }
 
     /**

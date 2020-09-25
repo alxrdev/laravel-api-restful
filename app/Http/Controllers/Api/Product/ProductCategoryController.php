@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\Product\DetachCategoryService;
 use App\Traits\ApiResponse;
+use App\Traits\CollectionListHelpers;
 use Illuminate\Http\Request;
 
 class ProductCategoryController extends ApiController
 {
-    use ApiResponse;
+    use ApiResponse, CollectionListHelpers;
 
     /**
      * Display a listing of the resource.
@@ -19,10 +21,10 @@ class ProductCategoryController extends ApiController
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function index(Product $product)
+    public function index(Product $product, Request $request)
     {
-        $categories = $product->categories;
-        return $this->collectionResponse('All categories', $categories);
+        $categories = $this->sortedFilteredAndPaginatedCollection($product->categories, $request, ['name', 'created_at'], [], CategoryResource::class);
+        return $this->paginatedResponse('All categories', $categories);
     }
 
     /**
@@ -36,9 +38,7 @@ class ProductCategoryController extends ApiController
     public function update(Request $request, Product $product, Category $category)
     {
         $product->categories()->syncWithoutDetaching([$category->id]);
-        $categories = $product->categories;
-
-        return $this->collectionResponse('Category attached', $categories);
+        return $this->collectionResponse('Category attached', CategoryResource::collection($product->categories));
     }
 
     /**
@@ -50,7 +50,8 @@ class ProductCategoryController extends ApiController
      */
     public function destroy(Product $product, Category $category)
     {
-        $categories = (new DetachCategoryService())->execute($product, $category);
-        return $this->collectionResponse('Category detached', $categories);
+        (new DetachCategoryService())->execute($product, $category);
+        return response()
+            ->noContent();
     }
 }
