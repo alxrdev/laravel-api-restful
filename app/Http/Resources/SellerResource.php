@@ -25,6 +25,22 @@ class SellerResource extends JsonResource
                 [
                     'rel' => 'self',
                     'href' => route('sellers.show', $this->id)
+                ],
+                [
+                    'rel' => 'seller.buyers',
+                    'href' => route('sellers.buyers.index', $this->id)
+                ],
+                [
+                    'rel' => 'seller.categories',
+                    'href' => route('sellers.categories.index', $this->id)
+                ],
+                [
+                    'rel' => 'seller.products',
+                    'href' => route('sellers.products.index', $this->id)
+                ],
+                [
+                    'rel' => 'seller.transactions',
+                    'href' => route('sellers.transactions.index', $this->id)
                 ]
             ]
         ];
